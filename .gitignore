@@ -5,6 +5,8 @@ game/
 Debug/
 Release/
 
+enc_temp_folder/
+
 *.vcxproj.user
 
 *.vcs
