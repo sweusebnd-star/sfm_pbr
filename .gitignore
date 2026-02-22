@@ -1,0 +1,10 @@
+.vs
+
+game/
+
+Debug/
+Release/
+
+*.vcxproj.user
+
+*.vcs
