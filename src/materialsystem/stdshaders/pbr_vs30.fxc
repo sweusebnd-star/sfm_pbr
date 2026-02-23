@@ -5,11 +5,12 @@
 //==================================================================================================
 
 // STATIC: "WORLD_NORMAL"			    "0..1"
+// STATIC: "LIGHTMAPPED"                "0..1"
 
-//  DYNAMIC: "COMPRESSED_VERTS"         "0..1"
-//  DYNAMIC: "DOWATERFOG"               "0..1"
-//  DYNAMIC: "SKINNING"                 "0..1"
-//  DYNAMIC: "NUM_LIGHTS"               "0..4"
+// DYNAMIC: "COMPRESSED_VERTS"          "0..1"
+// DYNAMIC: "DOWATERFOG"                "0..1"
+// DYNAMIC: "SKINNING"                  "0..1"
+// DYNAMIC: "NUM_LIGHTS"                "0..4"
 
 #include "common_vs_fxc.h"
 
@@ -59,18 +60,22 @@ VS_OUTPUT main( const VS_INPUT v )
 {
     VS_OUTPUT o = ( VS_OUTPUT )0;
 
-    o.lightmapTexCoord3.z = dot(v.vTexCoord0, cBaseTexCoordTransform[0]) + cBaseTexCoordTransform[0].w;
-    o.lightmapTexCoord3.w = dot(v.vTexCoord0, cBaseTexCoordTransform[1]) + cBaseTexCoordTransform[1].w;
-    o.lightmapTexCoord1And2.xy = v.vLightmapTexCoord + v.vLightmapTexCoordOffset;
-
-    float2 lightmapTexCoord2 = o.lightmapTexCoord1And2.xy + v.vLightmapTexCoordOffset;
-    float2 lightmapTexCoord3 = lightmapTexCoord2 + v.vLightmapTexCoordOffset;
-
-    // Reversed component order
-    o.lightmapTexCoord1And2.w = lightmapTexCoord2.x;
-    o.lightmapTexCoord1And2.z = lightmapTexCoord2.y;
-
-    o.lightmapTexCoord3.xy = lightmapTexCoord3;
+#if LIGHTMAPPED
+	{
+		o.lightmapTexCoord3.z = dot(v.vTexCoord0, cBaseTexCoordTransform[0]) + cBaseTexCoordTransform[0].w;
+		o.lightmapTexCoord3.w = dot(v.vTexCoord0, cBaseTexCoordTransform[1]) + cBaseTexCoordTransform[1].w;
+		o.lightmapTexCoord1And2.xy = v.vLightmapTexCoord + v.vLightmapTexCoordOffset;
+	
+		float2 lightmapTexCoord2 = o.lightmapTexCoord1And2.xy + v.vLightmapTexCoordOffset;
+		float2 lightmapTexCoord3 = lightmapTexCoord2 + v.vLightmapTexCoordOffset;
+	
+		// Reversed component order
+		o.lightmapTexCoord1And2.w = lightmapTexCoord2.x;
+		o.lightmapTexCoord1And2.z = lightmapTexCoord2.y;
+	
+		o.lightmapTexCoord3.xy = lightmapTexCoord3;
+	}
+#endif
 
 	float4 vPosition = v.vPos;
 	float3 vNormal;

@@ -350,6 +350,7 @@ BEGIN_VS_SHADER(PBR, "PBR shader")
                 // Setting up static vertex shader
                 DECLARE_STATIC_VERTEX_SHADER(pbr_vs30);
                 SET_STATIC_VERTEX_SHADER_COMBO(WORLD_NORMAL, bWorldNormal);
+                SET_STATIC_VERTEX_SHADER_COMBO(LIGHTMAPPED, bLightMapped);
                 SET_STATIC_VERTEX_SHADER(pbr_vs30);
 
                 // Setting up static pixel shader
