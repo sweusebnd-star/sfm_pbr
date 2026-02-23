@@ -83,7 +83,7 @@ const float4x4 cViewProj				: register(c8);
 
 // Only cFlexScale.x is used
 // It is a binary value used to switch on/off the addition of the flex delta stream
-const float4 cFlexScale					: register(c13);
+const float4 cFlexScale					: register(c225);
 
 const float4 cFogParams					: register(c16);
 #define cFogEndOverFogRange cFogParams.x

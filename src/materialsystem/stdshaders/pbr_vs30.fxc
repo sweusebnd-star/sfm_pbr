@@ -33,15 +33,15 @@ struct VS_INPUT
     float2 vTexCoord0               : TEXCOORD0;
     float4 vLightmapTexCoord        : TEXCOORD1;
     float4 vLightmapTexCoordOffset  : TEXCOORD2;
+	// Stuff used by flexes
+	float3 vPosFlex					: POSITION1;
+	float3 vNormalFlex				: NORMAL1;
 };
 
 struct VS_OUTPUT
 {
     // Stuff that isn't seen by the pixel shader
     float4 projPosSetup             : POSITION;
-#if !defined( _X360 ) && !defined( SHADER_MODEL_VS_3_0 )
-    float  fog                      : FOG;
-#endif
     // Stuff that is seen by the pixel shader
     float2 baseTexCoord             : TEXCOORD0;
     float4 lightAtten               : TEXCOORD1;
@@ -72,21 +72,23 @@ VS_OUTPUT main( const VS_INPUT v )
 
     o.lightmapTexCoord3.xy = lightmapTexCoord3;
 
-    float3 vNormal;
-    DecompressVertex_Normal(v.vNormal, vNormal);
+	float4 vPosition = v.vPos;
+	float3 vNormal;
+	DecompressVertex_Normal(v.vNormal, vNormal);
+	
+	// Flexes (shapekeys)
+	ApplyMorph(v.vPosFlex, v.vNormalFlex, vPosition.xyz, vNormal);
 
+	// Skinning (bones)
     float3 worldNormal, worldPos;
-    SkinPositionAndNormal(g_bSkinning, v.vPos, vNormal, v.vBoneWeights, v.vBoneIndices, worldPos, worldNormal);
+    SkinPositionAndNormal(g_bSkinning, vPosition, vNormal, v.vBoneWeights, v.vBoneIndices, worldPos, worldNormal);
 
     // Transform into projection space
     float4 vProjPos = mul(float4(worldPos, 1), cViewProj);
     o.projPosSetup = vProjPos;
 
     o.projPos = vProjPos.xyz;
-#if !defined( _X360 ) && !defined( SHADER_MODEL_VS_3_0 )
-    o.fog = CalcFog(worldPos, vProjPos.xyz, g_FogType);
-#endif
-
+	
     // Needed for water fog alpha and diffuse lighting 
     o.worldPos = worldPos;
     o.worldNormal = normalize(worldNormal);
